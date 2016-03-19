@@ -25,7 +25,7 @@
 @_exported import MediaType
 @_exported import InterchangeData
 
-public enum MediaTypeSerializerCollectionError: ErrorType {
+public enum MediaTypeSerializerCollectionError: ErrorProtocol {
     case NoSuitableSerializer
     case MediaTypeNotFound
 }
@@ -40,7 +40,7 @@ public final class MediaTypeSerializerCollection {
     public init() {}
 
     public func setPriority(mediaTypes: MediaType...) throws {
-        for mediaType in mediaTypes.reverse() {
+        for mediaType in mediaTypes.reversed() {
             try setTopPriority(mediaType)
         }
     }
@@ -49,8 +49,8 @@ public final class MediaTypeSerializerCollection {
         for index in 0 ..< serializers.count {
             let tuple = serializers[index]
             if tuple.0 == mediaType {
-                serializers.removeAtIndex(index)
-                serializers.insert(tuple, atIndex: 0)
+                serializers.remove(at: index)
+                serializers.insert(tuple, at: 0)
                 return
             }
         }
@@ -73,7 +73,7 @@ public final class MediaTypeSerializerCollection {
     }
 
     public func serialize(data: InterchangeData, mediaTypes: [MediaType]) throws -> (MediaType, Data) {
-        var lastError: ErrorType?
+        var lastError: ErrorProtocol?
 
         for acceptedType in mediaTypes {
             for (mediaType, serializer) in serializersFor(acceptedType) {
